@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { API_URL, LOC_URL } from '../Constants/constant'
+import { API_URL, LOC_URL,KEY } from '../Constants/constant'
 import { connect } from 'react-redux';
 import { fetchLocal } from '../Action/action'
 import * as d3 from 'd3'
@@ -29,11 +29,14 @@ function Country(props) {
         navigator.geolocation.getCurrentPosition((position) => {
             var lat = position.coords.latitude;
             var long = position.coords.longitude;
-            fetch(LOC_URL + "lat=" + lat + "&lng=" + long + "&username=abhibzu").then(resp => resp.json())
+            fetch(LOC_URL + lat + "," + long + "?o=json&incl=ciso2&key=" + KEY).then(resp => resp.json())
                 .then(
                     (resp) => {
-                        document.getElementById("country").value = resp["countryCode"]
-                        fetchData(resp["countryCode"])
+                        console.log(resp)
+                        var code = resp.resourceSets[0].resources[0].address.countryRegionIso2
+                        console.log(code)
+                        document.getElementById("country").value = code
+                        fetchData(code)
                     }
                 )
         })
